@@ -1,176 +1,87 @@
 # VirtuLayer Privacy Policy
 
-**Effective Date:** October 9, 2026  
-**Last Updated:** October 9, 2026  
+**Effective date:** October 9, 2026  
+**Last updated:** October 9, 2026  
 **Developer:** SchmidtWorks  
 **Contact:** schmidtworksdeveloper@gmail.com
 
-## 1. Introduction
+## 1. Scope and purpose
 
-VirtuLayer is an independently developed browser extension for Google Chrome and Microsoft Edge designed to improve the performance, usability, and efficiency of Virtuous CRM.
+VirtuLayer is an independently developed Chrome and Microsoft Edge extension that accelerates supported contact-record sections in Virtuous CRM. This policy describes the information processed by VirtuLayer version 0.1.2, including its temporary prefetch cache and cleanup functions.
 
-SchmidtWorks ("we," "us," or "our") respects the privacy of individuals using VirtuLayer. This Privacy Policy explains what information the extension accesses, how that information is processed and temporarily stored, and how it is protected.
+VirtuLayer works inside an existing authenticated Virtuous session. It does not create an independent CRM account, bypass Virtuous access controls, or grant additional permissions.
 
-VirtuLayer operates within the user's existing authenticated Virtuous CRM environment. It does not provide independent access to CRM records or grant permissions beyond those already assigned to the user.
+## 2. Information processed
 
-## 2. Information Accessed and Processed
+While a user views supported Virtuous contact records, VirtuLayer may retrieve and temporarily process information available to that user, including:
 
-VirtuLayer accesses selected information within Virtuous CRM to support its functionality.
+- Contact identifiers and other personal information in supported CRM responses.
+- Gift transactions, donation histories, and pledge information.
+- Contact notes, note text, authors, dates, and related metadata, which may include personal communications.
+- Active tasks and reminders.
+- Request addresses and parameters needed to associate responses with the appropriate CRM section and contact.
 
-Depending on the records being accessed and the user's permissions, this information may include:
+The extension does not independently request passwords, payment card details, or authentication credentials. The authenticated browser session is used to make requests to Virtuous.
 
-- Personal information, including contact names, identifiers, and associated contact details.
-- Financial information, including donation records, gift histories, and pledge information.
-- Contact notes, comments, and related metadata.
-- Tasks, reminders, and associated CRM activities.
-- Other information contained within the supported CRM responses.
+## 3. How information is used
 
-VirtuLayer processes this information only as necessary to provide its intended CRM enhancements.
+VirtuLayer prefetches contact Notes, Gifts, active Tasks, and Pledges, then reuses matching responses to improve loading performance. Notes may be loaded progressively in groups of 10, 30, and 100.
 
-The extension does not independently request or collect user passwords, authentication credentials, credit card numbers, or payment authorization information.
+For accelerated Notes lists, a single exceptionally long note body may be replaced with a placeholder in the temporary response presented to the interface. The original note stored in Virtuous is not changed.
 
-## 3. Purpose of Data Processing
+The extension processes this information for CRM performance improvements only, not advertising, profiling, lending, or creditworthiness assessments.
 
-VirtuLayer processes CRM information solely to improve the functionality and performance of the Virtuous CRM interface.
+## 4. Temporary in-memory caching
 
-Its current functionality includes preloading selected contact-related records and temporarily caching the resulting information to reduce repeated requests and improve perceived loading times.
+In version 0.1.2, prefetched CRM response bodies are kept in a JavaScript memory cache associated with the current loaded page document. They are **not written by this version to** `sessionStorage`, `localStorage`, IndexedDB, or extension storage.
 
-The extension may also process information necessary to identify supported CRM pages, match previously retrieved responses with subsequent requests, and maintain the functionality of its performance enhancements.
+The cache uses these validity periods:
 
-Information accessed by VirtuLayer is not used for advertising, marketing, behavioural profiling, creditworthiness assessments, lending decisions, or purposes unrelated to the extension's functionality.
+- Gifts, active Tasks, and Pledges: **2 minutes**.
+- Contact Notes: **5 minutes**.
 
-## 4. Temporary Data Storage and Caching
+The cache holds at most **20 entries** and limits each cached response to **2 MiB** measured as UTF-8 text. Expired entries are removed when accessed or during a periodic check approximately every 15 seconds.
 
-VirtuLayer uses temporary browser storage to support its CRM performance-enhancement functionality.
+The cache is cleared when the page document ends, when the user leaves the supported contact-record area, or when the extension detects certain sign-out, sign-in, and authentication-failure events. The extension also prevents results from requests started before a detected cache reset from being inserted into the new cache.
 
-In the current implementation, selected CRM responses are stored using the browser's sessionStorage mechanism, associated with the Virtuous CRM website.
+A full-page navigation or reload does not preserve this in-memory response cache. Ordinary browser and Virtuous application behaviour may independently retain information outside VirtuLayer's cache. Clearing a JavaScript cache does not guarantee immediate erasure of all memory copies by the browser.
 
-The extension uses the following cache validity periods:
+## 5. Earlier-version storage cleanup
 
-- Gifts, tasks, and pledges: 2 minutes.
-- Contact notes: 5 minutes.
+Version 0.1.2 attempts to remove known Virtuous-prefetch keys previously written to the website's `sessionStorage` by supported earlier script versions. It does not intentionally remove unrelated website storage. This cleanup may be limited by the browser's access and storage lifecycle.
 
-After these periods, the extension considers the cached responses expired and removes expired entries when they are subsequently accessed through its cache-management logic.
+## 6. Data transmission, sharing, and analytics
 
-Expired data may remain in browser session storage until it is accessed and removed, the applicable browser session ends, or the relevant storage is cleared.
+VirtuLayer sends the supported prefetch requests directly to the Virtuous CRM website through the user's existing authenticated session. These requests may include contact identifiers and request parameters needed to retrieve records.
 
-Browser session storage may persist during navigation or page reloads within the same tab. Actual removal behaviour may also depend on browser session restoration and storage-management mechanisms.
+The reviewed version does **not** send CRM responses, donor information, notes, gifts, or usage telemetry to SchmidtWorks, a separate analytics provider, or an advertising network. SchmidtWorks does not sell this CRM data or use it for unrelated purposes. Virtuous and the organization operating the CRM remain responsible for their own platform operations and data practices.
 
-Cached CRM responses are not maintained in a separate database operated by SchmidtWorks.
+Debugging messages may appear in the local browser developer console; the extension does not automatically send them to SchmidtWorks.
 
-## 5. Data Transmission and Sharing
+## 7. Security and permissions
 
-VirtuLayer communicates with Virtuous CRM through the user's existing authenticated browser session.
+Version 0.1.2 operates on `https://app.virtuoussoftware.com/*` and executes a content script in the webpage's main JavaScript context to integrate with Virtuous's request-handling code. Page scripts on that origin may interact with that execution context. The response cache is not separately encrypted by VirtuLayer.
 
-The current extension does not transmit CRM contact information, donation records, notes, pledges, or other cached CRM content to SchmidtWorks or to external analytics, advertising, or tracking services.
+The extension makes authenticated, read-oriented requests and is designed not to alter the underlying Virtuous donor records, gift transactions, or permissions. Users should follow their organization's security requirements for CRM access, shared devices, and sensitive records.
 
-SchmidtWorks does not sell, rent, or commercially distribute personal information processed by VirtuLayer.
+## 8. Retention, deletion, and user controls
 
-The extension does not use or transfer user information for purposes unrelated to its stated functionality.
+VirtuLayer does not maintain an external CRM-data database. Its version 0.1.2 response cache expires and is cleared as described above. Closing or reloading the relevant page ends that document's in-memory cache. Uninstalling the extension prevents its further processing but does not delete records held by Virtuous or necessarily remove data created by older versions in site storage.
 
-Information requested from Virtuous remains subject to Virtuous's platform operations and the data-management policies of the organization responsible for the CRM records.
+Users can manage browser extensions through their browser settings. Requests to access, correct, or delete CRM information should be directed to the organization responsible for that information.
 
-## 6. Authentication and Permissions
+## 9. Contact inquiries
 
-VirtuLayer relies on Virtuous CRM's existing authentication and authorization mechanisms.
+Questions about VirtuLayer or its privacy practices can be sent to **schmidtworksdeveloper@gmail.com**. Information voluntarily provided in support emails will be used to respond to the inquiry and manage related correspondence.
 
-The extension does not independently authenticate users, manage CRM accounts, or grant access to restricted information.
+## 10. Children
 
-Any CRM information accessed by the extension is retrieved using the existing browser session and remains subject to the permissions and access controls enforced by Virtuous.
+VirtuLayer is intended as a professional CRM productivity tool, not as a service directed at children. Information about minors that may exist in authorized CRM responses is subject to the relevant organization's controls.
 
-VirtuLayer does not intentionally bypass authentication requirements or CRM authorization restrictions.
+## 11. Policy changes
 
-## 7. Data Security
+SchmidtWorks may revise this policy as VirtuLayer changes. The most recent version and its update date will be published on this page. Material changes in data practices should also be reflected in the browser-store disclosures.
 
-VirtuLayer is designed to operate within supported Virtuous CRM pages and to limit its processing to functionality necessary for its stated purpose.
+## 12. Independent development
 
-The extension uses the browser's existing security and storage mechanisms.
-
-Temporarily cached information is stored within the Virtuous website's browser session storage. VirtuLayer does not apply separate encryption to these cached responses, and scripts executing within the same website origin may be able to access that storage.
-
-Users should follow their organization's policies regarding access to confidential CRM information, workstation security, and shared-device usage.
-
-No method of electronic storage or processing can guarantee absolute security.
-
-## 8. Data Retention and Deletion
-
-VirtuLayer does not maintain an external database of CRM information or independently retain donor and contact records on SchmidtWorks-operated servers.
-
-Temporary cached information is managed through the extension's cache-expiration logic and the browser's session-storage mechanisms, as described in Section 4.
-
-Users may clear locally stored website information through their browser's site-data controls.
-
-Uninstalling VirtuLayer stops the extension from performing further processing but does not necessarily remove data previously stored in the Virtuous website's sessionStorage.
-
-The extension does not delete or modify the underlying CRM records when clearing or expiring cached responses.
-
-## 9. Analytics and Tracking
-
-The current version of VirtuLayer does not integrate third-party analytics, advertising networks, or independent user-tracking services.
-
-The extension does not transmit browsing histories, CRM activity logs, or usage analytics to SchmidtWorks.
-
-Local diagnostic information may be written to the browser's developer console to assist with technical troubleshooting. This information is not automatically transmitted to the developer.
-
-VirtuLayer does not create its own advertising cookies or use CRM information for targeted advertising.
-
-## 10. Third-Party Services
-
-VirtuLayer is designed to function with Virtuous CRM, a third-party software platform.
-
-Use of Virtuous CRM is subject to the agreements, privacy practices, and security policies established by Virtuous and the organization operating the relevant CRM environment.
-
-VirtuLayer is not responsible for the independent data-processing practices of Virtuous or other services used by the organization.
-
-VirtuLayer is independently developed and is not affiliated with, sponsored by, endorsed by, or officially supported by Virtuous Software.
-
-## 11. User Rights and Privacy Inquiries
-
-VirtuLayer does not independently maintain a database of CRM users or donor records.
-
-Requests to access, correct, or delete information maintained within Virtuous CRM should be directed to the organization responsible for those records.
-
-Questions about VirtuLayer's own processing of information, temporary browser storage, or privacy practices may be directed to SchmidtWorks.
-
-If you contact SchmidtWorks by email, the information you voluntarily provide in your correspondence will be used to respond to your inquiry.
-
-## 12. Children's Privacy
-
-VirtuLayer is a professional productivity extension intended for use within authorized CRM environments.
-
-It is not designed for children and does not independently solicit personal information from children.
-
-Any information concerning minors that may exist within Virtuous CRM remains subject to the data-management responsibilities and access controls of the organization operating that CRM environment.
-
-## 13. Changes to This Privacy Policy
-
-SchmidtWorks may update this Privacy Policy to reflect changes in VirtuLayer's functionality, data-processing practices, security measures, or applicable requirements.
-
-The most current version will be published at the official VirtuLayer Privacy Policy URL.
-
-The effective or last-updated date will be revised when substantive changes are made.
-
-Changes to the extension's handling of personal information will be reflected in the applicable browser-store privacy disclosures.
-
-## 14. Contact Information
-
-For questions, concerns, or inquiries regarding this Privacy Policy or VirtuLayer's data-processing practices, contact:
-
-**SchmidtWorks**  
-Email: schmidtworksdeveloper@gmail.com
-
-## 15. Summary of Privacy Practices
-
-VirtuLayer is designed to enhance the Virtuous CRM experience while limiting information processing to its intended functionality.
-
-The current extension:
-
-- Accesses only supported Virtuous CRM pages.
-- Uses the user's existing authenticated CRM session.
-- Temporarily caches selected CRM responses within the browser.
-- Does not independently transmit CRM information to SchmidtWorks.
-- Does not sell user information or use it for advertising.
-- Does not collect passwords or independently manage authentication.
-- Does not maintain an external database of donor or CRM information.
-
-SchmidtWorks is committed to maintaining transparent data-processing practices and updating this policy as VirtuLayer develops.
+VirtuLayer is developed independently by SchmidtWorks and is not affiliated with, endorsed by, or officially supported by Virtuous Software.
